@@ -1,0 +1,63 @@
+# Default configuration for footwear impression matching
+
+# General settings
+seed: 42
+output_dir: './results'
+device: 'cuda'
+
+# Dataset settings
+data:
+  train_csv: './data/processed/train_pairs.csv'
+  val_csv: './data/processed/val_pairs.csv'
+  img_size: 512
+  batch_size: 32
+  num_workers: 4
+  triplet_mode: true
+  online_augment: true
+
+# Model settings
+model:
+  name: 'FootwearMatchingNetwork'  # 'FootwearMatchingNetwork' or 'EnhancedSiameseNetwork'
+  backbone: 'resnet50'  # 'resnet18', 'resnet50', 'resnext50_32x4d', 'efficientnet_b0'
+  pretrained: true
+  feature_dim: 256
+  dropout_rate: 0.4
+  use_attention: true
+  use_self_attention: true
+  correlation_temp: 10.0
+
+# Loss settings
+loss:
+  name: 'EnhancedContrastiveLoss'
+  margin: 0.5
+  alpha: 0.5  # Weight for contrastive loss
+  beta: 0.3   # Weight for triplet loss
+  gamma: 0.1  # Weight for L2 regularization
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+  use_focal: true
+
+# Optimizer settings
+optimizer:
+  name: 'AdamW'
+  lr: 0.0001
+  weight_decay: 0.0001
+  backbone_lr_factor: 0.1  # Learning rate factor for backbone
+  
+# Scheduler settings
+scheduler:
+  name: 'OneCycleLR'  # 'OneCycleLR', 'CosineAnnealingWarmRestarts', 'ReduceLROnPlateau', or None
+  max_lr: 0.001
+  pct_start: 0.3
+  div_factor: 25.0
+  final_div_factor: 10000.0
+  
+# Training settings
+training:
+  num_epochs: 50
+  validate_every: 1
+  early_stopping_patience: 10
+  fp16: true
+  use_ema: true
+  ema_decay: 0.999
+  clip_grad_norm: 1.0
