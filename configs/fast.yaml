@@ -1,0 +1,63 @@
+# Fast configuration for quick experimentation and testing
+
+# General settings
+seed: 42
+output_dir: './results_fast'
+device: 'cuda'
+
+# Dataset settings
+data:
+  train_csv: './data/processed/train_pairs.csv'
+  val_csv: './data/processed/val_pairs.csv'
+  img_size: 384  # Smaller image size for faster training
+  batch_size: 64
+  num_workers: 4
+  triplet_mode: false  # Disable triplet mode for faster training
+  online_augment: false  # Disable online augmentation for faster training
+
+# Model settings
+model:
+  name: 'FootwearMatchingNetwork'
+  backbone: 'resnet18'  # Lighter backbone
+  pretrained: true
+  feature_dim: 128  # Smaller feature dimension
+  dropout_rate: 0.3
+  use_attention: true
+  use_self_attention: false  # Disable self-attention for faster training
+  correlation_temp: 10.0
+
+# Loss settings
+loss:
+  name: 'EnhancedContrastiveLoss'
+  margin: 0.5
+  alpha: 0.5
+  beta: 0.0  # Disable triplet loss for faster training
+  gamma: 0.0  # Disable regularization for faster training
+  focal_alpha: 0.25
+  focal_gamma: 2.0
+  use_focal: true
+
+# Optimizer settings
+optimizer:
+  name: 'AdamW'
+  lr: 0.001  # Higher learning rate for faster convergence
+  weight_decay: 0.0001
+  backbone_lr_factor: 0.1
+  
+# Scheduler settings
+scheduler:
+  name: 'OneCycleLR'
+  max_lr: 0.01
+  pct_start: 0.3
+  div_factor: 25.0
+  final_div_factor: 1000.0
+  
+# Training settings
+training:
+  num_epochs: 20  # Fewer epochs
+  validate_every: 1
+  early_stopping_patience: 5  # Lower patience
+  fp16: true
+  use_ema: false  # Disable EMA for faster training
+  ema_decay: 0.999
+  clip_grad_norm: 1.0
